@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using POS.Models.Entities;
 
 namespace POS.Data
 {
@@ -7,5 +8,6 @@ namespace POS.Data
         public POSDbContext(DbContextOptions<POSDbContext> options) : base(options)
         {
         }
+        public DbSet<User> Users { get; set; }
     }
 }
