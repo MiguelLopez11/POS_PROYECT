@@ -29,9 +29,9 @@ namespace POS.Models.DTOs
     public class UserResponseDTO
     {
         public int UserId { get; set; }
-        public required string Name { get; set; }
-        public required string Email { get; set; }
+        public  string Name { get; set; }
+        public  string Email { get; set; }
         public DateTime CreationDate { get; set; }
-        public required string Token { get; set; }
+        public  string Token { get; set; }
     }
 }
