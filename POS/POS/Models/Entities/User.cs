@@ -20,6 +20,8 @@ namespace POS.Models.Entities
 
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }
