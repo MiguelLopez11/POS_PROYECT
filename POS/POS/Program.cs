@@ -4,53 +4,42 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using POS.Data;
 using POS.Services;
+using System;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var jwtKey = builder.Configuration["Jwt:Key"];
+//var jwtSettings = builder.Configuration.GetSection("Jwt");
+//var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+//Add secret key management solution for production use 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 
 // Add services to the container
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; // true en producción
-        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? "")),
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero // Cero tolerancia para testing
-        };
-
-        // Para debugging - agrega esto temporalmente
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine($"Authentication failed: {context.Exception.Message}");
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context =>
-            {
-                Console.WriteLine("Token validated successfully");
-                return Task.CompletedTask;
-            }
+            ValidateIssuerSigningKey = true
         };
     });
 
@@ -95,8 +84,7 @@ builder.Services.AddSwaggerGen(options =>
 
 
 builder.Services.AddDbContext<POSDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseNpgsql(connectionString));
 
 // Registrar servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
