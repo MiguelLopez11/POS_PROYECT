@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using POS.Models.DTOs;
 using POS.Services;
@@ -9,6 +10,7 @@ namespace POS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("StrictPolicy")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
