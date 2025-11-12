@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using POS.Data;
-using POS.Models;
+using POS.Models.Entities;
 
 namespace POS.Controllers
 {
@@ -51,7 +51,7 @@ namespace POS.Controllers
             }
             return Ok(product);
         }
-        [HttpPut("{id}")]
+        [HttpPut("{productId}")]
         public async Task<IActionResult> UpdateProductAsync(int productId, [FromBody] Product updatedProduct)
         {
             if (updatedProduct == null || productId != updatedProduct.ProductId)
@@ -71,7 +71,7 @@ namespace POS.Controllers
             await _context.SaveChangesAsync();
             return StatusCode (200, "Product updated");
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{productId}")]
         public async Task<IActionResult> DeleteProductAsync(int productId)
         {
             var product = await _context.Products.FindAsync(productId);

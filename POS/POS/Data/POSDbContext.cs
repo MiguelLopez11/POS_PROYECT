@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using POS.Models;
 using POS.Models.Entities;
 
 namespace POS.Data

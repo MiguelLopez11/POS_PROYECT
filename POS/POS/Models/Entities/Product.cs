@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace POS.Models
+namespace POS.Models.Entities
 {
     public class Product
     {
@@ -9,6 +9,6 @@ namespace POS.Models
         public required string ProductName { get; set; }
         public required decimal Price { get; set; }
         public required float Quantity { get; set; }
-        public Boolean isAvailable { get; set; } = true;
+        public bool isAvailable { get; set; } = true;
     }
 }
